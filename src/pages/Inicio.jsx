@@ -1,30 +1,35 @@
 ﻿import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import TablaEmpleados from "../components/TablaEmpleados";
 import "../styles/pages.css";
 
-const badgeClass = {
-  "Asalariado":         "badge-asalariado",
-  "PorHoras":           "badge-horas",
-  "Comision":           "badge-comision",
-  "AsalariadoComision": "badge-asal-com",
-};
+const formatRD = (n) =>
+  `RD$${(n || 0).toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 
 export default function Inicio() {
   const [empleados, setEmpleados] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]     = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get("/empleados").then(setEmpleados).finally(() => setLoading(false));
   }, []);
 
   const totalNomina = empleados.reduce((sum, e) => sum + (e.pagoCalculado || 0), 0);
-  const activos = empleados.filter(e => e.estado).length;
+  const activos     = empleados.filter(e => e.estado).length;
 
   const stats = [
-    { label: "Total empleados", value: empleados.length,  icon: "ti-users",      accent: false },
-    { label: "Activos",         value: activos,            icon: "ti-user-check", accent: false },
-    { label: "Nomina semanal",  value: `RD$${totalNomina.toLocaleString("es-DO",{minimumFractionDigits:2})}`, icon: "ti-cash", accent: true },
+    { label: "Total empleados", value: empleados.length,     icon: "ti-users",      accent: false },
+    { label: "Activos",         value: activos,               icon: "ti-user-check", accent: false },
+    { label: "Nomina semanal",  value: formatRD(totalNomina), icon: "ti-cash",       accent: true  },
   ];
+
+  const handleDesactivar = async (id) => {
+    if (!confirm("Desactivar este empleado?")) return;
+    await api.delete(`/empleados/${id}`);
+    api.get("/empleados").then(setEmpleados);
+  };
 
   return (
     <div>
@@ -49,24 +54,11 @@ export default function Inicio() {
         {loading ? (
           <div className="loading">Cargando...</div>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                {["Nombre","Cedula","Tipo","Pago semanal","Estado"].map(h => <th key={h}>{h}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {empleados.slice(0,5).map(e => (
-                <tr key={e.empleadoId}>
-                  <td className="td-bold">{e.nombreCompleto}</td>
-                  <td className="td-muted">{e.numeroSeguroSocial}</td>
-                  <td><span className={`badge ${badgeClass[e.tipoEmpleado] || ""}`}>{e.tipoEmpleado}</span></td>
-                  <td className="td-accent">RD${(e.pagoCalculado||0).toLocaleString("es-DO",{minimumFractionDigits:2})}</td>
-                  <td><span className={`badge ${e.estado ? "badge-activo" : "badge-inactivo"}`}>{e.estado ? "Activo" : "Inactivo"}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TablaEmpleados
+            empleados={empleados}
+            onEditar={id => navigate(`/empleados/${id}/editar`)}
+            onDesactivar={handleDesactivar}
+          />
         )}
       </div>
     </div>

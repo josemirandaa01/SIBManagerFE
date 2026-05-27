@@ -1,39 +1,38 @@
-﻿import { useEffect, useState } from "react";
-import {
+﻿import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
-import api from "../services/api";
-import { Badge } from "../components/TablaEmpleados";
-import "../styles/pages.css";
+import { useState, useMemo } from "react";
 import "../styles/tabla.css";
 
 const formatRD = (n) =>
   `RD$${(n || 0).toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 
-const detalleTexto = (emp) => {
-  const d = emp.detalle;
-  switch (emp.tipoEmpleado) {
-    case "Asalariado":         return `Salario fijo: ${formatRD(d.salarioSemanal)}`;
-    case "PorHoras":
-    case "Por Horas":          return `${d.horasNormales}h normales + ${d.horasExtra}h extra x1.5`;
-    case "Comision":           return `${formatRD(d.ventasBrutas)} x ${d.tarifaPorcentaje}`;
-    case "AsalariadoComision": return `Base ${formatRD(d.salarioBase)} + comision + bonif. 10%`;
-    default: return "-";
-  }
+const badgeClass = {
+  "Asalariado":         "badge-asalariado",
+  "Por Horas":          "badge-horas",
+  "PorHoras":           "badge-horas",
+  "Comision":           "badge-comision",
+  "AsalariadoComision": "badge-asal-com",
 };
 
-function TablaReporte({ empleados }) {
-  const [sorting, setSorting] = useState([]);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
+export function Badge({ tipo }) {
+  const label = tipo === "PorHoras" ? "Por Horas" : tipo;
+  return <span className={`badge ${badgeClass[tipo] || ""}`}>{label}</span>;
+}
+
+export default function TablaEmpleados({ empleados, onEditar, onDesactivar }) {
+  const [sorting, setSorting]           = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [pagination, setPagination]     = useState({ pageIndex: 0, pageSize: 8 });
 
   const columns = useMemo(() => [
     {
-      accessorKey: "nombre",
+      accessorKey: "nombreCompleto",
       header: "Nombre",
       cell: info => <span className="td-bold">{info.getValue()}</span>,
     },
@@ -48,33 +47,70 @@ function TablaReporte({ empleados }) {
       cell: info => <Badge tipo={info.getValue()} />,
     },
     {
-      id: "detalle",
-      header: "Detalle calculo",
-      enableSorting: false,
-      cell: ({ row }) => (
-        <span className="td-muted">{detalleTexto(row.original)}</span>
-      ),
+      accessorKey: "departamento",
+      header: "Departamento",
+      cell: info => <span className="td-muted">{info.getValue() || "-"}</span>,
     },
     {
-      accessorKey: "pagoSemanal",
+      accessorKey: "pagoCalculado",
       header: "Pago semanal",
       cell: info => <span className="td-accent">{formatRD(info.getValue())}</span>,
     },
-  ], []);
+    {
+      accessorKey: "estado",
+      header: "Estado",
+      cell: info => (
+        <span className={`badge ${info.getValue() ? "badge-activo" : "badge-inactivo"}`}>
+          {info.getValue() ? "Activo" : "Inactivo"}
+        </span>
+      ),
+    },
+    {
+      id: "acciones",
+      header: "Acciones",
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="tabla-acciones">
+          <button className="action-btn edit"
+            onClick={() => onEditar(row.original.empleadoId)}>
+            <i className="ti ti-edit" aria-hidden="true" />
+          </button>
+          <button className="action-btn delete"
+            onClick={() => onDesactivar(row.original.empleadoId)}>
+            <i className="ti ti-trash" aria-hidden="true" />
+          </button>
+        </div>
+      ),
+    },
+  ], [onEditar, onDesactivar]);
 
   const table = useReactTable({
     data: empleados,
     columns,
-    state: { sorting, pagination },
+    state: { sorting, globalFilter, pagination },
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     getCoreRowModel:       getCoreRowModel(),
     getSortedRowModel:     getSortedRowModel(),
+    getFilteredRowModel:   getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
     <div>
+      <div className="tabla-toolbar">
+        <input
+          value={globalFilter}
+          onChange={e => setGlobalFilter(e.target.value)}
+          placeholder="Buscar en la tabla..."
+          className="tabla-search"
+        />
+        <span className="tabla-count">
+          {table.getFilteredRowModel().rows.length} empleados
+        </span>
+      </div>
+
       <div className="tabla-wrapper">
         <table className="data-table">
           <thead>
@@ -104,15 +140,23 @@ function TablaReporte({ empleados }) {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {table.getRowModel().rows.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="tabla-empty">
+                  No se encontraron empleados
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getRowModel().rows.map(row => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -150,54 +194,6 @@ function TablaReporte({ empleados }) {
             <option key={size} value={size}>Ver {size}</option>
           ))}
         </select>
-      </div>
-    </div>
-  );
-}
-
-export default function ReporteSemanal() {
-  const [reporte, setReporte] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api.get("/empleados/reporte-semanal").then(setReporte).finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <div className="loading">Cargando reporte...</div>;
-  if (!reporte) return null;
-
-  const stats = [
-    { label: "Semana",            value: reporte.semanaActual,          icon: "ti-calendar", accent: false, sm: true },
-    { label: "Empleados pagados", value: reporte.totalEmpleados,        icon: "ti-users",    accent: false },
-    { label: "Total nomina",      value: formatRD(reporte.totalNomina), icon: "ti-cash",     accent: true  },
-  ];
-
-  return (
-    <div>
-      <div className="stats-grid">
-        {stats.map(s => (
-          <div key={s.label} className="stat-card">
-            <div className={`stat-icon ${s.accent ? "accent" : "default"}`}>
-              <i className={`ti ${s.icon}`} aria-hidden="true" />
-            </div>
-            <div>
-              <div className="stat-label">{s.label}</div>
-              <div className={`stat-value ${s.accent ? "accent" : ""} ${s.sm ? "sm" : ""}`}>
-                {s.value}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="table-card">
-        <div className="table-card-header">
-          <span className="table-card-title">Detalle por empleado</span>
-          <span className="td-muted" style={{ fontSize: 12 }}>
-            Generado: {new Date(reporte.fechaGeneracion).toLocaleString("es-DO")}
-          </span>
-        </div>
-        <TablaReporte empleados={reporte.empleados} />
       </div>
     </div>
   );
