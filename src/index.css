@@ -1,0 +1,31 @@
+﻿*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sidebar-bg: #0d1f2d;
+  --sidebar-hover: #1a3448;
+  --sidebar-active: #1e3d56;
+  --accent: #e04e1f;
+  --accent-hover: #c43d10;
+  --main-bg: #edf0f5;
+  --card-bg: #ffffff;
+  --text-primary: #1a2b3c;
+  --text-secondary: #6b7a8d;
+  --border: rgba(0,0,0,0.07);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font: "DM Sans", sans-serif;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--main-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+input, select, textarea, button { font-family: var(--font); }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c5cdd6; border-radius: 10px; }

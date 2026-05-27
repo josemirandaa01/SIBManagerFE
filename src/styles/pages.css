@@ -1,0 +1,164 @@
+﻿.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  border: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon.default { background: #f1f5fb; }
+.stat-icon.accent  { background: #fff0eb; }
+.stat-icon i       { font-size: 22px; color: #378add; }
+.stat-icon.accent i { color: var(--accent); }
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stat-value.accent { color: var(--accent); }
+.stat-value.sm     { font-size: 13px; }
+
+.table-card {
+  background: white;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+  overflow: hidden;
+}
+
+.table-card-header {
+  padding: 16px 20px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-card-title {
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.data-table { width: 100%; border-collapse: collapse; }
+
+.data-table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-bottom: 0.5px solid var(--border);
+  background: #f8fafc;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text-primary);
+}
+
+.td-muted {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.td-bold { font-weight: 500; }
+.td-accent { font-weight: 600; color: var(--accent); }
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.badge-asalariado { background: #e6f1fb; color: #185fa5; }
+.badge-horas      { background: #eaf3de; color: #3b6d11; }
+.badge-comision   { background: #faeeda; color: #854f0b; }
+.badge-asal-com   { background: #eeedfe; color: #534ab7; }
+.badge-activo     { background: #eaf3de; color: #3b6d11; }
+.badge-inactivo   { background: #fef2f2; color: #dc2626; }
+
+.filters-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.filters-bar input,
+.filters-bar select {
+  flex: 1;
+  padding: 9px 14px;
+  border: 0.5px solid #d0d5dd;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  outline: none;
+  font-family: var(--font);
+  background: white;
+}
+
+.filters-bar input:focus,
+.filters-bar select:focus { border-color: #378add; }
+
+.btn {
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  white-space: nowrap;
+}
+
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-dark { background: var(--sidebar-bg); color: white; }
+.btn-secondary { background: white; color: var(--text-primary); border: 0.5px solid #d0d5dd; }
+.btn-secondary:hover { background: #f8fafc; }
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.action-btn.edit  i { font-size: 16px; color: #378add; }
+.action-btn.delete i { font-size: 16px; color: #e24b4a; }
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+}
