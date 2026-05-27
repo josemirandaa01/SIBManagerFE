@@ -13,16 +13,18 @@
 }
 
 .sidebar-logo {
+  background: white;
   border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  padding: 16px;
   margin-bottom: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .sidebar-logo img {
-  height: 36px;
+  height: 48px;
   object-fit: contain;
 }
 
