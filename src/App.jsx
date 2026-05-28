@@ -29,10 +29,10 @@ function AppRoutes() {
         <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
           <Route index element={<Inicio />} />
           <Route path="empleados" element={<Empleados />} />
-          <Route path="empleados/nuevo" element={<CrearEmpleado />} />
-          <Route path="empleados/:id/editar" element={<EditarEmpleado />} />
-          <Route path="reporte" element={<ReporteSemanal />} />
-          <Route path="usuarios" element={<AdminRoute><Usuarios /></AdminRoute>} />
+          <Route path="empleados/nuevo"       element={<AdminRoute><CrearEmpleado /></AdminRoute>} />
+          <Route path="empleados/:id/editar"  element={<AdminRoute><EditarEmpleado /></AdminRoute>} />
+          <Route path="reporte"               element={<ReporteSemanal />} />
+          <Route path="usuarios"              element={<AdminRoute><Usuarios /></AdminRoute>} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

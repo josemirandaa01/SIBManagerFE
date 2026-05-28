@@ -7,6 +7,7 @@
   flexRender,
 } from "@tanstack/react-table";
 import { useState, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import "../styles/tabla.css";
 
 const formatRD = (n) =>
@@ -29,8 +30,11 @@ export default function TablaEmpleados({ empleados, onEditar, onDesactivar }) {
   const [sorting, setSorting]           = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination]     = useState({ pageIndex: 0, pageSize: 8 });
+  const { usuario } = useAuth();
 
-  const columns = useMemo(() => [
+  const esAdmin = usuario?.rol === "Admin";
+
+  const columnaBase = [
     {
       accessorKey: "nombreCompleto",
       header: "Nombre",
@@ -65,24 +69,29 @@ export default function TablaEmpleados({ empleados, onEditar, onDesactivar }) {
         </span>
       ),
     },
-    {
-      id: "acciones",
-      header: "Acciones",
-      enableSorting: false,
-      cell: ({ row }) => (
-        <div className="tabla-acciones">
-          <button className="action-btn edit"
-            onClick={() => onEditar(row.original.empleadoId)}>
-            <i className="ti ti-edit" aria-hidden="true" />
-          </button>
-          <button className="action-btn delete"
-            onClick={() => onDesactivar(row.original.empleadoId)}>
-            <i className="ti ti-trash" aria-hidden="true" />
-          </button>
-        </div>
-      ),
-    },
-  ], [onEditar, onDesactivar]);
+  ];
+
+  const columnaAcciones = {
+    id: "acciones",
+    header: "Acciones",
+    enableSorting: false,
+    cell: ({ row }) => (
+      <div className="tabla-acciones">
+        <button className="action-btn edit"
+          onClick={() => onEditar(row.original.empleadoId)}>
+          <i className="ti ti-edit" aria-hidden="true" />
+        </button>
+        <button className="action-btn delete"
+          onClick={() => onDesactivar(row.original.empleadoId)}>
+          <i className="ti ti-trash" aria-hidden="true" />
+        </button>
+      </div>
+    ),
+  };
+
+  const columns = useMemo(() =>
+    esAdmin ? [...columnaBase, columnaAcciones] : columnaBase,
+  [onEditar, onDesactivar, esAdmin]);
 
   const table = useReactTable({
     data: empleados,
@@ -100,8 +109,7 @@ export default function TablaEmpleados({ empleados, onEditar, onDesactivar }) {
   return (
     <div>
       <div className="tabla-toolbar">
-        <input
-          value={globalFilter}
+        <input value={globalFilter}
           onChange={e => setGlobalFilter(e.target.value)}
           placeholder="Buscar en la tabla..."
           className="tabla-search"

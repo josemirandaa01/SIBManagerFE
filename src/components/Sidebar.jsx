@@ -2,16 +2,10 @@
 import { useAuth } from "../context/AuthContext";
 import "../styles/sidebar.css";
 
-const navItems = [
-  { to: "/",                icon: "ti-home",         label: "Inicio" },
-  { to: "/empleados",       icon: "ti-users",         label: "Consulta" },
-  { to: "/empleados/nuevo", icon: "ti-plus",          label: "Crear registro" },
-  { to: "/reporte",         icon: "ti-report-money",  label: "Reporte semanal" },
-];
-
 export default function Sidebar() {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
+  const esAdmin = usuario?.rol === "Admin";
 
   const handleLogout = () => { logout(); navigate("/login"); };
 
@@ -22,19 +16,35 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {navItems.map(item => (
-          <NavLink key={item.to} to={item.to} end={item.to === "/"}
-            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-          >
-            <i className={`ti ${item.icon}`} aria-hidden="true" />
-            {item.label}
-          </NavLink>
-        ))}
+        <NavLink to="/" end
+          className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
+          <i className="ti ti-home" aria-hidden="true" />
+          Inicio
+        </NavLink>
 
-        {usuario?.rol === "Admin" && (
+        <NavLink to="/empleados"
+          className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
+          <i className="ti ti-users" aria-hidden="true" />
+          Consulta
+        </NavLink>
+
+        {esAdmin && (
+          <NavLink to="/empleados/nuevo"
+            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
+            <i className="ti ti-plus" aria-hidden="true" />
+            Crear registro
+          </NavLink>
+        )}
+
+        <NavLink to="/reporte"
+          className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
+          <i className="ti ti-report-money" aria-hidden="true" />
+          Reporte semanal
+        </NavLink>
+
+        {esAdmin && (
           <NavLink to="/usuarios"
-            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-          >
+            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
             <i className="ti ti-user-cog" aria-hidden="true" />
             Usuarios
           </NavLink>

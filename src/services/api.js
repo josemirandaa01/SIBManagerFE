@@ -23,6 +23,7 @@ const api = {
       method: "PUT", headers: getHeaders(), body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error(await res.text());
+    if (res.status === 204) return null;
     return res.json();
   },
   delete: async (endpoint) => {

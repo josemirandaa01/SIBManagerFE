@@ -2,13 +2,17 @@
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import TablaEmpleados from "../components/TablaEmpleados";
+import { useAuth } from "../context/AuthContext";
 import "../styles/pages.css";
 
 export default function Empleados() {
-  const [empleados, setEmpleados] = useState([]);
+  const [empleados, setEmpleados]       = useState([]);
   const [filtroEstado, setFiltroEstado] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]           = useState(true);
   const navigate = useNavigate();
+  const { usuario } = useAuth();
+
+  const esAdmin = usuario?.rol === "Admin";
 
   const cargarEmpleados = () => {
     setLoading(true);
@@ -35,9 +39,11 @@ export default function Empleados() {
           <option value="false">Inactivos</option>
         </select>
         <button className="btn btn-dark" onClick={cargarEmpleados}>Filtrar</button>
-        <button className="btn btn-primary" onClick={() => navigate("/empleados/nuevo")}>
-          + Nuevo empleado
-        </button>
+        {esAdmin && (
+          <button className="btn btn-primary" onClick={() => navigate("/empleados/nuevo")}>
+            + Nuevo empleado
+          </button>
+        )}
       </div>
 
       <div className="table-card">

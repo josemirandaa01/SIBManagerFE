@@ -35,6 +35,11 @@ export default function Usuarios() {
 
   useEffect(() => { cargar(); }, []);
 
+  const rolNombreAId = (nombre) => {
+    const rol = roles.find(r => r.nombre === nombre);
+    return rol?.rolId || 1;
+  };
+
   const abrirCrear = () => {
     setEditando(null);
     setForm({ nombreUsuario: "", email: "", password: "", rolId: roles[0]?.rolId || 1 });
@@ -44,7 +49,12 @@ export default function Usuarios() {
 
   const abrirEditar = (u) => {
     setEditando(u);
-    setForm({ nombreUsuario: u.nombreUsuario, email: u.email, password: "", rolId: u.rolId || 1 });
+    setForm({
+      nombreUsuario: u.nombreUsuario,
+      email:         u.email,
+      password:      "",
+      rolId:         rolNombreAId(u.rol)
+    });
     setError("");
     setModal(true);
   };
@@ -270,16 +280,16 @@ export default function Usuarios() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div className="form-group">
             <label>Nombre de usuario</label>
-            <input value={form.nombreUsuario} required placeholder="usuario"
+            <input value={form.nombreUsuario} required placeholder="jose.miranda"
               onChange={e => setForm({...form, nombreUsuario: e.target.value})} />
           </div>
           <div className="form-group">
             <label>Email</label>
-            <input type="email" value={form.email} required placeholder="correo"
+            <input type="email" value={form.email} required placeholder="jose@empresa.com"
               onChange={e => setForm({...form, email: e.target.value})} />
           </div>
           <div className="form-group">
-            <label>{editando ? "Nueva contraseña" : "Contrasena"}</label>
+            <label>{editando ? "Nueva contrasena (dejar vacio para no cambiar)" : "Contrasena"}</label>
             <input type="password" value={form.password} required={!editando} placeholder="..."
               onChange={e => setForm({...form, password: e.target.value})} />
           </div>
