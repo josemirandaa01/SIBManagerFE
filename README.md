@@ -36,8 +36,6 @@ npm run dev
 
 La aplicación estará disponible en `http://localhost:5173`.
 
-> Asegúrate de tener el backend corriendo antes de abrir el frontend.
-
 ## Tecnologías
 
 - React 18
