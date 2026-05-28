@@ -270,16 +270,16 @@ export default function Usuarios() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div className="form-group">
             <label>Nombre de usuario</label>
-            <input value={form.nombreUsuario} required placeholder="jose.miranda"
+            <input value={form.nombreUsuario} required placeholder="usuario"
               onChange={e => setForm({...form, nombreUsuario: e.target.value})} />
           </div>
           <div className="form-group">
             <label>Email</label>
-            <input type="email" value={form.email} required placeholder="jose@empresa.com"
+            <input type="email" value={form.email} required placeholder="correo"
               onChange={e => setForm({...form, email: e.target.value})} />
           </div>
           <div className="form-group">
-            <label>{editando ? "Nueva contrasena (dejar vacio para no cambiar)" : "Contrasena"}</label>
+            <label>{editando ? "Nueva contraseña" : "Contrasena"}</label>
             <input type="password" value={form.password} required={!editando} placeholder="..."
               onChange={e => setForm({...form, password: e.target.value})} />
           </div>
