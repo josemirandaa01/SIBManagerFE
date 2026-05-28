@@ -7,10 +7,18 @@ import Empleados from "./pages/Empleados";
 import CrearEmpleado from "./pages/CrearEmpleado";
 import EditarEmpleado from "./pages/EditarEmpleado";
 import ReporteSemanal from "./pages/ReporteSemanal";
+import Usuarios from "./pages/Usuarios";
 
 const PrivateRoute = ({ children }) => {
   const { usuario } = useAuth();
   return usuario ? children : <Navigate to="/login" replace />;
+};
+
+const AdminRoute = ({ children }) => {
+  const { usuario } = useAuth();
+  if (!usuario) return <Navigate to="/login" replace />;
+  if (usuario.rol !== "Admin") return <Navigate to="/" replace />;
+  return children;
 };
 
 function AppRoutes() {
@@ -24,6 +32,7 @@ function AppRoutes() {
           <Route path="empleados/nuevo" element={<CrearEmpleado />} />
           <Route path="empleados/:id/editar" element={<EditarEmpleado />} />
           <Route path="reporte" element={<ReporteSemanal />} />
+          <Route path="usuarios" element={<AdminRoute><Usuarios /></AdminRoute>} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

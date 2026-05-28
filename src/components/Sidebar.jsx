@@ -30,6 +30,15 @@ export default function Sidebar() {
             {item.label}
           </NavLink>
         ))}
+
+        {usuario?.rol === "Admin" && (
+          <NavLink to="/usuarios"
+            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+          >
+            <i className="ti ti-user-cog" aria-hidden="true" />
+            Usuarios
+          </NavLink>
+        )}
       </nav>
 
       <div className="sidebar-footer">

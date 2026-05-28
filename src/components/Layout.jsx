@@ -3,11 +3,12 @@ import Sidebar from "./Sidebar";
 import "../styles/layout.css";
 
 const getTitle = (pathname) => {
-  if (pathname === "/")                     return "Inicio";
-  if (pathname === "/empleados")            return "Consulta de empleados";
-  if (pathname === "/empleados/nuevo")      return "Crear registro";
-  if (pathname.includes("/editar"))         return "Editar empleado";
-  if (pathname === "/reporte")              return "Reporte semanal";
+  if (pathname === "/")                return "Inicio";
+  if (pathname === "/empleados")       return "Consulta de empleados";
+  if (pathname === "/empleados/nuevo") return "Crear registro";
+  if (pathname.includes("/editar"))    return "Editar empleado";
+  if (pathname === "/reporte")         return "Reporte semanal";
+  if (pathname === "/usuarios")        return "Gestion de usuarios";
   return "SIB Manager";
 };
 
